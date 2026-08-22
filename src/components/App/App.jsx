@@ -7,6 +7,7 @@ import './App.css';
 
 const App = () => {
   const dispatch = useDispatch();
+
   const contacts = useSelector(getFilteredContacts);
   const filter = useSelector(getFilter);
 
@@ -18,10 +19,15 @@ const App = () => {
       alert('Введи ім’я та номер телефону!');
       return;
     }
-    const id = Date.now().toString();
-    dispatch(addContact({ id, name, number }));
+
+    dispatch(addContact(name.trim(), number.trim()));
+
     setName('');
     setNumber('');
+  };
+
+  const handleDelete = id => {
+    dispatch(deleteContact(id));
   };
 
   return (
@@ -33,15 +39,19 @@ const App = () => {
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="Введи ім я"
+          placeholder="Введи ім'я"
         />
+
         <input
           type="tel"
           value={number}
           onChange={e => setNumber(e.target.value)}
           placeholder="Введіть номер"
         />
-        <button onClick={handleAdd}>Add Contact</button>
+
+        <button type="button" onClick={handleAdd}>
+          Add Contact
+        </button>
       </div>
 
       <input
@@ -55,8 +65,14 @@ const App = () => {
       <ul>
         {contacts.map(contact => (
           <li key={contact.id}>
-            {contact.name} — {contact.number}
-            <button onClick={() => dispatch(deleteContact(contact.id))}>
+            <span>
+              {contact.name} — {contact.number}
+            </span>
+
+            <button
+              type="button"
+              onClick={() => handleDelete(contact.id)}
+            >
               Delete
             </button>
           </li>
