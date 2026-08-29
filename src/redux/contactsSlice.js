@@ -27,7 +27,6 @@ const contactsSlice = createSlice({
 
 export const { addContact, deleteContact, setContacts } = contactsSlice.actions;
 
-// 👉 Ось тут експортуються селектори
 export const {
   selectAll: selectAllContacts,
   selectById: selectContactById,

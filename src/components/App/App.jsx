@@ -1,83 +1,65 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addContact, deleteContact } from '../../redux/contactsSlice';
-import { setFilter } from '../../redux/filterSlice';
-import { getFilteredContacts, getFilter } from '../../redux/selectors';
-import './App.css';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { refreshUser } from '../../redux/authSlice';
+
+import Navigation from '../Auth/Navigation';
+import AuthMenu from '../Auth/AuthMenu';
+import PrivateRoute from '../Auth/PrivateRoute';
+
+import RegisterPage from '../../pages/RegisterPage';
+import LoginPage from '../../pages/LoginPage';
+import ContactsPage from '../../pages/ContactsPage';
 
 const App = () => {
   const dispatch = useDispatch();
+  const { token, isRefreshing } = useSelector(state => state.auth);
 
-  const contacts = useSelector(getFilteredContacts);
-  const filter = useSelector(getFilter);
-
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
-  const handleAdd = () => {
-    if (!name.trim() || !number.trim()) {
-      alert('Введи ім’я та номер телефону!');
-      return;
+  useEffect(() => {
+    if (token) {
+      dispatch(refreshUser());
     }
+  }, [dispatch, token]);
 
-    dispatch(addContact(name.trim(), number.trim()));
-
-    setName('');
-    setNumber('');
-  };
-
-  const handleDelete = id => {
-    dispatch(deleteContact(id));
-  };
+  if (isRefreshing) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="app">
-      <h1>Phone List</h1>
+      <header
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '20px',
+        }}
+      >
+        <Navigation />
+        <AuthMenu />
+      </header>
 
-      <div className="form">
-        <input
-          type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Введи ім'я"
-        />
+      <main>
+        <Routes>
+          <Route path="/" element={<Navigate to="/contacts" />} />
 
-        <input
-          type="tel"
-          value={number}
-          onChange={e => setNumber(e.target.value)}
-          placeholder="Введіть номер"
-        />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <button type="button" onClick={handleAdd}>
-          Add Contact
-        </button>
-      </div>
+          <Route path="/login" element={<LoginPage />} />
 
-      <input
-        type="text"
-        value={filter}
-        onChange={e => dispatch(setFilter(e.target.value))}
-        placeholder="Search contacts..."
-        style={{ marginTop: '10px' }}
-      />
+          <Route
+            path="/contacts"
+            element={
+              <PrivateRoute redirectTo="/login">
+                <ContactsPage />
+              </PrivateRoute>
+            }
+          />
 
-      <ul>
-        {contacts.map(contact => (
-          <li key={contact.id}>
-            <span>
-              {contact.name} — {contact.number}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => handleDelete(contact.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+          <Route path="*" element={<Navigate to="/contacts" />} />
+        </Routes>
+      </main>
     </div>
   );
 };
