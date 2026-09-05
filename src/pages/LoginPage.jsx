@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { logIn } from '../redux/authSlice';
+import { useNavigate } from 'react-router';
+import { logIn } from '../redux/authOps';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');

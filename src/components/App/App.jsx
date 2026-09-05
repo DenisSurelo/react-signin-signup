@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { refreshUser } from '../../redux/authSlice';
+import { refreshUser } from '../../redux/authOps';
+import { selectToken } from '../../redux/authSelectors';
 
-import Navigation from '../Auth/Navigation';
-import AuthMenu from '../Auth/AuthMenu';
+import SharedLayout from '../Auth/SharedLayout';
 import PrivateRoute from '../Auth/PrivateRoute';
 
 import RegisterPage from '../../pages/RegisterPage';
@@ -14,7 +14,7 @@ import ContactsPage from '../../pages/ContactsPage';
 
 const App = () => {
   const dispatch = useDispatch();
-  const { token, isRefreshing } = useSelector(state => state.auth);
+  const token = useSelector(selectToken);
 
   useEffect(() => {
     if (token) {
@@ -22,34 +22,27 @@ const App = () => {
     }
   }, [dispatch, token]);
 
-  if (isRefreshing) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div className="app">
-      <header
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '20px',
-        }}
-      >
-        <Navigation />
-        <AuthMenu />
-      </header>
-
-      <main>
-        <Routes>
-          <Route path="/" element={<Navigate to="/contacts" />} />
-
-          <Route path="/register" element={<RegisterPage />} />
-
-          <Route path="/login" element={<LoginPage />} />
+      <Routes>
+        <Route path="/" element={<SharedLayout />}>
+          <Route
+            index
+            element={<Navigate to="/contacts" replace />}
+          />
 
           <Route
-            path="/contacts"
+            path="register"
+            element={<RegisterPage />}
+          />
+
+          <Route
+            path="login"
+            element={<LoginPage />}
+          />
+
+          <Route
+            path="contacts"
             element={
               <PrivateRoute redirectTo="/login">
                 <ContactsPage />
@@ -57,11 +50,15 @@ const App = () => {
             }
           />
 
-          <Route path="*" element={<Navigate to="/contacts" />} />
-        </Routes>
-      </main>
+          <Route
+            path="*"
+            element={<Navigate to="/contacts" replace />}
+          />
+        </Route>
+      </Routes>
     </div>
   );
 };
 
 export default App;
+
