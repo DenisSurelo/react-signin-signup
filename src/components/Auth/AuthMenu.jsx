@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { logOut } from '@redux/authSlice';
+import { logOut } from '../../redux/authOps';
 
 const AuthMenu = () => {
   const dispatch = useDispatch();
+
   const email = useSelector(state => state.auth.user?.email);
 
   const handleLogout = () => {

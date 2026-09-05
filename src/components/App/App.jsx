@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { refreshUser } from '../../redux/authOps';
 import { selectToken } from '../../redux/authSelectors';
 
-import SharedLayout from '../Auth/SharedLayout';
+import SharedLayout from "../Auth/SharedLayout";
 import PrivateRoute from '../Auth/PrivateRoute';
 
 import RegisterPage from '../../pages/RegisterPage';

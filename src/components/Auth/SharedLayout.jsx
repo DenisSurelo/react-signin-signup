@@ -1,8 +1,7 @@
 import { Outlet } from 'react-router';
 
-import Navigation from './Auth/Navigation';
-import AuthMenu from './Auth/AuthMenu';
-
+import Navigation from './Navigation';
+import AuthMenu from './AuthMenu';
 const SharedLayout = () => {
   return (
     <>
